@@ -1,0 +1,48 @@
+.
+├── README.md
+├── create-tree.sh
+├── infra
+│   ├── scripts
+│   │   ├── aws-eks.sh
+│   │   ├── create-eks.sh
+│   │   ├── deploy-nextjs.sh
+│   │   ├── deploy.sh
+│   │   └── install-cli-brew.sh
+│   ├── us-east-2
+│   │   ├── alb
+│   │   │   └── alb.tf
+│   │   ├── ec2
+│   │   │   └── ec2.tf
+│   │   ├── eks
+│   │   │   ├── main.tf
+│   │   │   └── nextjs-values.yaml
+│   │   └── vars
+│   │       ├── common.tfvars
+│   │       ├── prod.tfvars
+│   │       └── stage.tfvars
+│   └── us-west-2
+│       └── README.md
+├── populate-vars.sh
+├── terraform
+│   ├── us-east-2
+│   │   ├── main.tf
+│   │   ├── modules
+│   │   │   ├── alb
+│   │   │   │   └── alb.tf
+│   │   │   ├── ec2
+│   │   │   │   └── ec2.tf
+│   │   │   ├── eks
+│   │   │   │   ├── eks.tf
+│   │   │   │   └── iam.tf
+│   │   │   ├── key-pairs
+│   │   │   │   └── key-pairs.tf
+│   │   │   ├── security_groups
+│   │   │   │   └── security_groups.tf
+│   │   │   └── vpc
+│   │   │       └── vpc.tf
+│   │   └── variables.tf
+│   └── us-west-2
+│       └── README.md
+└── tree.txt
+
+19 directories, 27 files

@@ -1,0 +1,18 @@
+replicaCount: 2
+image:
+  repository: my-nextjs-app
+  tag: "latest"
+  pullPolicy: Always
+service:
+  type: LoadBalancer
+  port: 80
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+  paths:
+    - /
+  hosts:
+    - "my-chatapp.com"

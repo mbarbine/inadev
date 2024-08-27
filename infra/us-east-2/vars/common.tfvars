@@ -1,0 +1,9 @@
+region = "us-east-2"
+vpc_cidr = "10.0.0.0/16"
+eks_instance_type = "t3.medium"
+eks_desired_capacity = 2
+eks_max_capacity = 3
+eks_min_capacity = 1
+alb_health_check_path = "/"
+jenkins_instance_type = "t3.medium"
+key_name = "my-aws-key"  # Replace with your AWS key name
