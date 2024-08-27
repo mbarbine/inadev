@@ -1,6 +1,6 @@
 replicaCount: 2
 image:
-  repository: my-nextjs-app
+  repository: my-app
   tag: "latest"
   pullPolicy: Always
 service:
@@ -15,4 +15,28 @@ ingress:
   paths:
     - /
   hosts:
-    - "my-chatapp.com"
+    - "my-app.com"
+replicaCount: 2
+image:
+  repository: my-app
+  tag: "latest"
+  pullPolicy: Always
+service:
+  type: LoadBalancer
+  port: 80
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+  paths:
+    - /
+  hosts:
+    - "my-app.com"
+
+env:
+  - name: NEXT_PUBLIC_API_URL
+    value: "https://api.cheeseusfries.com"
+  - name: NODE_ENV
+    value: "production"

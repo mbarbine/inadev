@@ -1,0 +1,52 @@
+jenkins:
+  systemMessage: "Jenkins configured with JCasC!"
+  numExecutors: 4
+
+securityRealm:
+  local:
+    allowsSignup: false
+    users:
+      - id: "admin"
+        password: "${JENKINS_ADMIN_PASSWORD}"
+
+authorizationStrategy:
+  loggedInUsersCanDoAnything:
+
+unclassified:
+  location:
+    adminAddress: "admin@example.com"
+
+tool:
+  git:
+    installations:
+      - name: "Default"
+        home: "/usr/bin/git"
+  
+plugins:
+  required:
+    - "git"
+    - "pipeline"
+    - "workflow-aggregator"
+    - "configuration-as-code"
+    - "kubernetes"
+
+jobs:
+  - script: >
+      pipelineJob('example-job') {
+          definition {
+              cps {
+                  script("""
+                      pipeline {
+                          agent any
+                          stages {
+                              stage('Build') {
+                                  steps {
+                                      echo 'Building...'
+                                  }
+                              }
+                          }
+                      }
+                  """.stripIndent())
+              }
+          }
+      }

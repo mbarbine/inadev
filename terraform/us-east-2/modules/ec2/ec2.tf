@@ -1,3 +1,18 @@
+variable "jenkins_instance_type" {
+  description = "Instance type for the Jenkins server"
+  type        = string
+}
+
+variable "key_name" {
+  description = "Key pair name for SSH access"
+  type        = string
+}
+
+variable "environment" {
+  description = "Environment name"
+  type        = string
+}
+
 resource "aws_instance" "jenkins_server" {
   ami           = "ami-0abcdef1234567890"  # Replace with valid AMI for your region
   instance_type = var.jenkins_instance_type

@@ -6,24 +6,16 @@ CLUSTER_NAME="weather-lama-eks-cluster"
 DOMAIN_NAME_1="inadev.cheeseusfries.com"
 DOMAIN_NAME_2="jenkins.cheeseusfries.com"
 DOMAIN_NAME_DEV="localhost"
-STAGE_INSTANCE_TYPE=${2:-"t3.small"}
-PROD_INSTANCE_TYPE=${3:-"t3.large"}
 SCRIPTS_DIR="scripts"
 TERRAFORM_DIR="terraform/us-east-2"
 ECR_REPOSITORY = 'nextjs-app-repo'
 CLUSTER_NAME = 'my-eks-cluster'
 EKS_NAMESPACE = 'default'
-AVAILABILITY_ZONES = 'us-east-2a us-east-2b'
-AWS_REGION = 'us-east-2'
-KMS_KEY_ALIAS = 'alias/eks-kms-key'
-KMS_KEY_ID = 'arn:aws:kms:us-east-2:123456789012:key/12345678-1234-1234-1234-123456789012'
-S3_BUCKETS = 'weather-lama-eks-cluster'
 ECR_REPO_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}"
 JENKINS_ADMIN_USER="admin"
 JENKINS_ADMIN_PASSWORD="adminpassword"
 JENKINS_IMAGE = "${ECR_REPO_URI}:jenkins"
 JENKINS_PORT = 8080
-BACKUP_DIR = 'jenkins-backups'
 JENKINS_VOLUME = 'jenkins-home'
 JENKINS_VOLUME_SIZE = 20
 JENKINS_BACKUP_BUCKET = 'jenkins-backups'
@@ -57,20 +49,6 @@ VARS_DIR="$SCRIPT_DIR/../infra/us-east-2/vars"
 
 # Ensure the vars directory exists
 mkdir -p "$VARS_DIR"
-
-# Determine the directory of the current script
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-VARS_DIR="$SCRIPT_DIR/../infra/us-east-2/vars"
-
-# Ensure the vars directory exists
-mkdir -p "$VARS_DIR"
-
-# Check if the AWS CLI is installed
-if ! command -v aws &> /dev/null; then
-    echo "AWS CLI is not installed. Please install the AWS CLI before running this script."
-    exit 1
-fi
-
 
 # Functions to query AWS resources
 get_vpc_id() {
@@ -116,14 +94,6 @@ get_ecr_repository_uri() {
 get_s3_bucket_name() {
   echo "Fetching S3 Bucket for Jenkins backups..."
   aws s3api list-buckets --query 'Buckets[?contains(Name, `jenkins-backups`) == `true`].Name' --output text
-}
-
-
-get_s3_bucket() {
-  echo "Fetching S3 Bucket Name..."
-  aws s3api list-buckets \
-    --query 'Buckets[?contains(Name, `cloudwatch-logs`)].Name' \
-    --output text
 }
 
 get_alb_dns_name() {
@@ -207,10 +177,6 @@ SUBNET_2=${SUBNETS_ARRAY[1]}
 IFS=' ' read -r -a AZ_ARRAY <<< "$AVAILABILITY_ZONES"
 AZ_1=${AZ_ARRAY[0]}
 AZ_2=${AZ_ARRAY[1]}
-populate_vars() {
-  local environment=$1
-  local instance_type=$2
-  local file_name="$VARS_DIR/$environment.tfvars"
 
 # Populate common.tfvars
 echo "Populating common.tfvars..."
@@ -230,7 +196,6 @@ eks_iam_role_arn = "$EKS_ROLE_ARN"
 EOL
 
 # Populate stage.tfvars
-populate_vars "stage" "$STAGE_INSTANCE_TYPE"
 echo "Populating stage.tfvars..."
 cat > "$VARS_DIR/stage.tfvars" <<EOL
 environment = "stage"
@@ -252,7 +217,6 @@ eks_iam_role_arn = "$EKS_ROLE_ARN"
 EOL
 
 # Populate prod.tfvars
-populate_vars "prod" "$PROD_INSTANCE_TYPE"
 echo "Populating prod.tfvars..."
 cat > "$VARS_DIR/prod.tfvars" <<EOL
 environment = "prod"

@@ -5,37 +5,63 @@ provider "aws" {
 # VPC Setup
 module "vpc" {
   source = "./modules/vpc"
-  cidr_block = var.vpc_cidr
+  vpc_cidr = var.vpc_cidr
+  environment = var.environment
 }
 
-# EKS Cluster Setup
 module "eks" {
   source = "./modules/eks"
-  instance_type    = var.eks_instance_type
-  desired_capacity = var.eks_desired_capacity
-  max_capacity     = var.eks_max_capacity
-  min_capacity     = var.eks_min_capacity
-  cluster_name     = var.cluster_name
 }
 
 # ALB Ingress Controller Setup
 module "alb_ingress_controller" {
   source = "./modules/alb"
-  health_check_path = var.alb_health_check_path
 }
 
-# Jenkins EC2 Setup
+# EC2 Setup
+module "ec2" {
+  source = "./modules/ec2"
+  environment = var.environment
+  key_name = var.key_name
+  jenkins_instance_type = var.jenkins_instance_type
+}
+
 module "ec2_jenkins" {
   source = "./modules/ec2"
   environment = var.environment
-}
-
-# Security Groups Setup
-module "security_groups" {
-  source = "./modules/security_groups"
+  key_name = var.key_name
+  jenkins_instance_type = var.jenkins_instance_type
 }
 
 # Key Pair Setup
 module "key_pairs" {
   source = "./modules/key-pairs"
+}
+
+# Root module to define EKS, EC2, VPC, IAM, ALB, and other services
+module "iam" {
+  source = "./modules/iam"
+}
+
+module "security_groups" {
+  source = "./modules/security_groups"
+}
+
+module "logging" {
+  source = "./modules/logging"
+  s3_bucket_name = var.s3_bucket_name
+  cloudwatch_log_group_name = var.cloudwatch_log_group_name
+  eks_cluster_name = module.eks.cluster_name
+}
+
+output "alb_dns_name" {
+  value = module.alb.alb_dns_name
+}
+
+output "eks_cluster_name" {
+  value = module.eks.cluster_name
+}
+
+output "jenkins_public_ip" {
+  value = module.ec2.jenkins_public_ip
 }

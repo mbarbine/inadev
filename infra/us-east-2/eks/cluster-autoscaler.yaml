@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cluster-autoscaler
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cluster-autoscaler
+  template:
+    metadata:
+      labels:
+        app: cluster-autoscaler
+    spec:
+      containers:
+        - name: cluster-autoscaler
+          image: k8s.gcr.io/cluster-autoscaler:v1.21.0
+          command:
+            - ./cluster-autoscaler
+            - --cloud-provider=aws
+            - --nodes=1:10:${var.eks_cluster_name}-node-group
+            - --skip-nodes-with-local-storage=false
+            - --balance-similar-node-groups
+          env:
+            - name: AWS_REGION
+              value: us-east-2
+            - name: KUBERNETES_CLUSTER_NAME
+              value: ${var.eks_cluster_name}
+          volumeMounts:
+            - name: ssl-certs
+              mountPath: /etc/ssl/certs/ca-certificates.crt
+              readOnly: true
+      volumes:
+        - name: ssl-certs
+          hostPath:
+            path: /etc/ssl/certs/ca-certificates.crt
