@@ -1,3 +1,7 @@
+variable "cluster_name" {
+  type = string
+}
+
 resource "helm_release" "alb_ingress_controller" {
   name       = "aws-load-balancer-controller"
   namespace  = "kube-system"

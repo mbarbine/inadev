@@ -21,6 +21,7 @@ variable "environment" {
   type        = string
 }
 
+# VPC Configuration
 resource "aws_vpc" "main" {
   cidr_block            = var.vpc_cidr
   enable_dns_support    = true
@@ -41,6 +42,7 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
+# Public Subnet Configuration
 resource "aws_subnet" "public_subnet" {
   count = length(var.public_subnet_cidrs)
 
@@ -54,6 +56,7 @@ resource "aws_subnet" "public_subnet" {
   }
 }
 
+# Private Subnet Configuration
 resource "aws_subnet" "private_subnet" {
   count = length(var.private_subnet_cidrs)
 
@@ -66,6 +69,7 @@ resource "aws_subnet" "private_subnet" {
   }
 }
 
+# Public Route Table Configuration
 resource "aws_route_table" "public_rt" {
   vpc_id = aws_vpc.main.id
 
@@ -87,7 +91,31 @@ resource "aws_route_table_association" "public_rta" {
   route_table_id = aws_route_table.public_rt.id
 }
 
-resource "aws_route_table" "private" {
+# NAT Gateway Configuration
+resource "aws_eip" "nat" {
+  count = length(aws_subnet.public_subnet)
+
+  vpc = true
+
+  tags = {
+    Name        = "${var.environment}-nat-eip-${count.index}"
+    Environment = var.environment
+  }
+}
+
+resource "aws_nat_gateway" "nat" {
+  count         = length(aws_subnet.public_subnet)
+  allocation_id = aws_eip.nat[count.index].id
+  subnet_id     = aws_subnet.public_subnet[count.index].id
+
+  tags = {
+    Name        = "${var.environment}-nat-gateway-${count.index}"
+    Environment = var.environment
+  }
+}
+
+# Private Route Table Configuration
+resource "aws_route_table" "private_rt" {
   vpc_id = aws_vpc.main.id
 
   route {
@@ -96,31 +124,14 @@ resource "aws_route_table" "private" {
   }
 
   tags = {
-    Name        = "${var.environment}-private-route-table"
+    Name        = "${var.environment}-private-rt"
     Environment = var.environment
   }
 }
 
-resource "aws_route_table_association" "private" {
+resource "aws_route_table_association" "private_rta" {
   count = length(aws_subnet.private_subnet)
 
   subnet_id      = aws_subnet.private_subnet[count.index].id
-  route_table_id = aws_route_table.private.id
-}
-
-resource "aws_nat_gateway" "nat" {
-  count           = length(aws_subnet.public_subnet)
-  allocation_id   = aws_eip.nat.id
-  subnet_id       = aws_subnet.public_subnet[count.index].id
-
-  tags = {
-    Name        = "${var.environment}-nat-${count.index}"
-    Environment = var.environment
-  }
-}
-
-resource "aws_eip" "nat" {
-  count = length(aws_subnet.public_subnet)
-
-  vpc = true
+  route_table_id = aws_route_table.private_rt.id
 }

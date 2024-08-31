@@ -1,3 +1,7 @@
+variable "environment" {}
+variable "jenkins_admin_password" {}
+variable "jenkins_api_token" {}
+
 resource "aws_ssm_parameter" "jenkins_admin_password" {
   name        = "/${var.environment}/jenkins/admin_password"
   description = "Jenkins Admin Password"

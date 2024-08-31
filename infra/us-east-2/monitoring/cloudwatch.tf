@@ -1,3 +1,13 @@
+variable "environment" {
+  type    = string
+  default = "production"  # Provide your desired environment value here
+}
+
+variable "alerts_email" {
+  type    = string
+  default = "example@example.com"  # Provide your email address here
+}
+
 resource "aws_cloudwatch_metric_alarm" "high_cpu_jekins" {
   alarm_name          = "${var.environment}-jenkins-high-cpu"
   comparison_operator = "GreaterThanThreshold"

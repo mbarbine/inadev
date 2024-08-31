@@ -2,12 +2,9 @@ variable "environment" {
   description = "Environment (stage/prod)"
   type        = string
 }
+
 variable "tags" {
   type = map(string)
-}
-
-output "resource_tags" {
-  value = var.tags
 }
 
 variable "application" {
@@ -23,11 +20,6 @@ variable "owner" {
 variable "cost_center" {
   description = "Cost center for billing"
   type        = string
-}
-{
-  description = "Enable DNS support in the VPC"
-  type        = bool
-  default     = true
 }
 
 variable "enable_dns_hostnames" {
@@ -51,18 +43,9 @@ variable "private_subnet_cidrs" {
   type        = list(string)
 }
 
-output "tags" {
-  value = {
-    Environment = var.environment
-    Application = var.application
-    Owner       = var.owner
-    CostCenter  = var.cost_center
-  }
-}
-
 resource "aws_vpc" "main" {
   cidr_block           = var.vpc_cidr
-  enable_dns_support   = var.enable_dns_support
+  enable_dns_support   = true
   enable_dns_hostnames = var.enable_dns_hostnames
 
   tags = {
@@ -96,37 +79,8 @@ resource "aws_subnet" "private_subnet" {
   }
 }
 
-
-output "tags" {
-  value = {
-    Environment = var.environment
-    Application = var.application
-    Owner       = var.owner
-    CostCenter  = var.cost_center
-  }
-variable "environment" {
-  description = "The environment being deployed (stage or prod)."
-  type        = string
-}
-
-variable "application" {
-  description = "The application or service name."
-  type        = string
-}
-
-variable "owner" {
-  description = "The owner of the resource."
-  type        = string
-}
-
-variable "cost_center" {
-  description = "Cost center for cost allocation."
-  type        = string
-}
-
-variable "project" {
-  description = "The project associated with this resource."
-  type        = string
+output "resource_tags" {
+  value = var.tags
 }
 
 output "tags" {
@@ -135,6 +89,5 @@ output "tags" {
     Application = var.application
     Owner       = var.owner
     CostCenter  = var.cost_center
-    Project     = var.project
   }
 }
