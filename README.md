@@ -1,62 +1,9 @@
-/
-├── README.md
-├── create-tree.sh
-├── infra
-│   ├── us-east-2
-│   │   ├── alb
-│   │   │   └── alb.tf                    # ALB configuration for routing traffic
-│   │   ├── ec2
-│   │   │   └── ec2.tf                    # EC2 Jenkins instance configuration
-│   │   ├── eks
-│   │   │   ├── main.tf                   # EKS cluster setup and resources
-│   │   │   ├── nextjs-values.yaml        # Helm values for Next.js Chat Service deployment
-│   │   │   └── addons.tf                 # Kubernetes add-ons for EKS
-│   │   ├── scripts
-│   │   │   ├── aws-eks.sh                # Script for installing AWS CLI, kubectl, and Helm
-│   │   │   ├── create-eks.sh             # Configures kubectl for EKS interaction
-│   │   │   ├── deploy-nextjs.sh          # Deploys the Next.js Chat Service using Helm
-│   │   │   ├── deploy.sh                 # Main deployment script for provisioning infrastructure
-│   │   │   ├── install-cli-brew.sh       # Installs CLI tools using Homebrew
-│   │   │   └── install-cluster-autoscaler.sh # Installs Cluster Autoscaler for EKS
-│   │   ├── vars
-│   │   │   ├── common.tfvars             # Common variables shared across environments
-│   │   │   ├── stage.tfvars              # Variables for stage environment
-│   │   │   └── prod.tfvars               # Variables for prod environment
-│   ├── us-west-2                         # Placeholder for future region setup
-│   │   └── README.md
-├── populate-vars.sh
-├── terraform
-│   ├── us-east-2
-│   │   ├── main.tf                       # Main Terraform file for provisioning all resources
-│   │   ├── variables.tf                  # Centralized variable definitions
-│   │   ├── modules
-│   │   │   ├── alb
-│   │   │   │   └── alb.tf                # ALB Terraform module
-│   │   │   ├── ec2
-│   │   │   │   └── ec2.tf                # EC2 Jenkins Terraform module
-│   │   │   ├── eks
-│   │   │   │   ├── eks.tf                # EKS Terraform module
-│   │   │   │   ├── iam.tf                # IAM roles and policies for EKS
-│   │   │   │   └── addons.tf             # Kubernetes add-ons for EKS (vpc-cni, CoreDNS, kube-proxy)
-│   │   │   ├── security_groups
-│   │   │   │   └── security_groups.tf    # Security groups for public access
-│   │   │   ├── backup
-│   │   │   │   └── main.tf               # Backup management (EBS, RDS)
-│   │   │   ├── logging
-│   │   │   │   └── main.tf               # Centralized logging for CloudWatch and S3
-│   │   │   ├── tagging
-│   │   │   │   └── main.tf               # Tagging and cost management
-│   │   │   └── vpc
-│   │   │       └── vpc.tf                # VPC and networking setup
-│   ├── us-west-2                         # Placeholder for future region setup
-│   │   └── README.md
-└── deploy.sh                             # Main deployment script to deploy all resources
 
- README.md
+└── deploy.sh                             # 
 
+Main deployment script to deploy all resources
 
-
-
+ 
 # AWS EKS + Jenkins + ALB + Next.js Chat Service Infrastructure
 
 This repository contains the infrastructure and scripts necessary to deploy a full AWS architecture using Terraform, including:
